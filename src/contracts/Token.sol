@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 contract Token {
-  string  public name = "DApp Token";
+  string  public name = "Xeng";
   string  public symbol = "DAPP";
   uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
   uint8   public decimals = 18;
@@ -48,4 +48,14 @@ contract Token {
     emit Transfer(_from, _to, _value);
     return true;
   }
+
+  // function ethTransferFrom(address _from, address payable _to, uint256 _value) public payable returns (bool success) {
+  //   require(_value <= balanceOf[_from]);
+  //   balanceOf[_from] += _value;
+  //   balanceOf[_to] -= _value;
+  //   allowance[_from][msg.sender] += _value;
+  //   emit Transfer(_from, _to, _value);
+  //   _to.transfer(_value);
+  //   return true;
+  // }
 }
