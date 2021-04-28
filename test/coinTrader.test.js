@@ -10,7 +10,7 @@ const tokenize = function (ether)
   return web3.utils.toWei(ether, "ether");
 }
 
-contract("CoinTrader", ([deployer, investor]) => {
+contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
 
   let token, coinTrader
 
@@ -70,6 +70,36 @@ contract("CoinTrader", ([deployer, investor]) => {
 
       //logs
       console.log((result.logs[0].args._value).toString());
+
+    });
+  });
+
+  // Testing for error
+  describe("Check error: passing is not good (just only the second test can pass when deployed)", async () => {
+    it("Testing for over-spending", async () => {
+      // purchasing process
+      let result = await coinTrader.purchase({from: tester2, value: tokenize("200")});
+
+    });
+
+    it("Testing for lacking of token of bookie", async () => {
+      // purchasing process
+      let result = await coinTrader.purchase({from: tester2, value: tokenize("20")});
+
+    });
+
+    it("Testing for over-selling", async () => {
+      // purchasing process
+      let result = await coinTrader.sell(tokenize("60") ,{from: tester2});
+
+    });
+
+    it("Testing for lacking of tokens of bookie", async () => {
+      // transfer to tester2 a little bit token
+      await token.transfer(tester2, tokenize("100"), {from: coinTrader.address});
+      // collect when bookie is lacking of tokes
+      let result = await coinTrader.sell(tokenize("1000"), {from: tester2});
+      
 
     });
   });
