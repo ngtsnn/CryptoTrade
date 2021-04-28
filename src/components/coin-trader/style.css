@@ -1,0 +1,13 @@
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.card{
+  transition: all .4s;
+}
+.card:hover{
+  position: relative;
+  transform: translateY(-5px);
+  box-shadow:0 0 10px #444;
+}

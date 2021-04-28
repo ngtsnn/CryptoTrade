@@ -1,1 +1,39 @@
+.main-app{
+  margin-top: 50px;
+}
+.gap{
+  height: 50px;
+  display: block;
+  width: 100%;
+}
+
 /* Styles go here */
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #108d6f;
+  border-color: #108d6f;
+  box-shadow: none;
+  outline: none;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #305891;
+  border-color: #305893;
+}
+
+/* section {
+  padding: 60px 0;
+} */
+
+section .section-title {
+  text-align: center;
+  color: #305893;
+  margin-bottom: 50px;
+  text-transform: uppercase;
+}
+
+#group_baucua .card {
+  border: none;
+  background: #ffffff;
+}
