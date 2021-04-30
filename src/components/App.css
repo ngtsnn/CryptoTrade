@@ -6,6 +6,11 @@
   display: block;
   width: 100%;
 }
+.gap-md{
+  height: 30px;
+  display: block;
+  width: 100%;
+}
 
 /* Styles go here */
 .btn-primary:hover,
@@ -36,4 +41,20 @@ section .section-title {
 #group_baucua .card {
   border: none;
   background: #ffffff;
+}
+
+.loading-container{
+  position: fixed;
+  z-index: 200;
+  width: 100vw;
+  height: 100vh;
+}
+.loading{
+  position: absolute;
+  transform: scale(3) ;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
 }

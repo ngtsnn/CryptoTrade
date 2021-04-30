@@ -5,9 +5,11 @@ require("chai")
   .use(require("chai-as-promised"))
   .should()
 
-const tokenize = function (ether) 
-{ 
+const tokenize = function (ether) { 
   return web3.utils.toWei(ether, "ether");
+}
+const etherize = function (weight){
+  return web3.utils.fromWei(weight, "ether");
 }
 
 contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
@@ -17,7 +19,7 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
   // initial things
   before(async () => {
     token = await Token.new();
-    coinTrader = await CoinTrader.new(token.address);
+    coinTrader = await CoinTrader.new(token.address, tester1);
     await token.transfer(coinTrader.address, tokenize("1000000"));
   })
 
@@ -74,6 +76,37 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
     });
   });
 
+  // Testing for Admin
+  describe("Check admin actions", async () => {
+    it("Testing for invest eth", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await web3.eth.getBalance(coinTrader.address); 
+
+      //investment process (invest 3 eth)
+      let result = await coinTrader.invest({from: tester1, value: tokenize("3")});
+
+      //get ether balance of contract after investing
+      let laterBalance = await web3.eth.getBalance(coinTrader.address); 
+
+      //check 
+      assert.equal(parseFloat(etherize(earlierBalance)) + 3, parseFloat(etherize(laterBalance)));
+    })
+
+    it("Testing for withdraw eth", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await web3.eth.getBalance(coinTrader.address); 
+
+      //withdrawal process (withdraw 2 eth)
+      let result = await coinTrader.withdraw(tokenize("2") ,{from: tester1});
+
+      //get ether balance of contract after investing
+      let laterBalance = await web3.eth.getBalance(coinTrader.address); 
+
+      //check
+      assert.equal(parseFloat(etherize(earlierBalance)) - 2, parseFloat(etherize(laterBalance)));
+    })
+  })
+
   // Testing for error
   describe("Check error: passing is not good (just only the second test can pass when deployed)", async () => {
     it("Testing for over-spending", async () => {
@@ -82,11 +115,11 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
 
     });
 
-    it("Testing for lacking of token of bookie", async () => {
-      // purchasing process
-      let result = await coinTrader.purchase({from: tester2, value: tokenize("20")});
+    // it("Testing for lacking of token of bookie", async () => {
+    //   // purchasing process
+    //   let result = await coinTrader.purchase({from: tester2, value: tokenize("20")});
 
-    });
+    // });
 
     it("Testing for over-selling", async () => {
       // purchasing process
@@ -102,6 +135,17 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
       
 
     });
+
+
+    it("Testing for investing too much by admin", async () => {
+      //investment process (invest 3 eth)
+      let result = await coinTrader.invest({from: tester1, value: tokenize("101")});
+    })
+
+    it("Testing for withdrawing too much by admin", async () => {
+      //withdrawal process (withdraw 2 eth)
+      let result = await coinTrader.withdraw(tokenize("101") ,{from: tester1});
+    })
   });
 
 });

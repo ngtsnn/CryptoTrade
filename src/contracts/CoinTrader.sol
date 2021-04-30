@@ -6,6 +6,8 @@ contract CoinTrader{
   string public name = "Coin trader";
   Token public token;
   uint public rate = 100;
+  address payable admin;
+
 
   // events
   event TokenPurchases(
@@ -20,9 +22,20 @@ contract CoinTrader{
     uint256 _value,
     uint256 _ethValue
   );
+  event BookieTransaction(
+    address indexed _admin,
+    address indexed _contract,
+    uint256 _ethVal,
+    string typeTransaction
+  );
 
-  constructor (Token _token) public {
+  constructor (Token _token, address payable _admin) public {
     token = _token;
+    admin = _admin;
+  }
+
+  function adminInfo () public view returns (address){
+    return admin;
   }
 
   function purchase () public payable {
@@ -53,6 +66,27 @@ contract CoinTrader{
     // transfer
     token.transferFrom(msg.sender, address(this), _amount);
     msg.sender.transfer(etherAmount);
+  }
+
+  function invest() public payable {
+
+    // check bookie call this function or not
+    require(msg.sender == admin);
+    // check bookie have no financial problem
+    require(msg.sender.balance >= msg.value);
+
+    emit BookieTransaction(admin, address(this), msg.value, "Investment");
+  }
+
+  function withdraw(uint256 _amount) public {
+
+    // check bookie call this function or not
+    require(msg.sender == admin);
+    // check deployed contract has enough eth
+    require(address(this).balance >= _amount);
+
+    admin.transfer(_amount);
+
   }
 
 }

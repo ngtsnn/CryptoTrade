@@ -24,7 +24,7 @@ class GameController extends Component {
           <form action="" method="POST">
             <div className="row">
               {/* bet card */}
-              {this.state.bets.map(bet => <BetCard img={bet} id={bet}></BetCard>)}
+              {this.state.bets.map(bet => <BetCard img={bet} id={bet} key={bet}></BetCard>)}
             </div>
             
 
