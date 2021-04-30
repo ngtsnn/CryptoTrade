@@ -22,6 +22,15 @@ class GameController extends Component {
       <section id="game">
         <div className="container-fluid">
           <form action="" method="POST">
+            <div className="err-msg" id="err-playing">
+              <div className="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                <span>Ôi bạn ơi bạn không có tiền thì chơi ít thôi bạn ơi</span>
+                <button type="button" className="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+
             <div className="row">
               {/* bet card */}
               {this.state.bets.map(bet => <BetCard img={bet} id={bet} key={bet}></BetCard>)}

@@ -60,7 +60,7 @@ contract CoinTrader{
     //check bookie have enough tokens or not
     require((address(this).balance) >= etherAmount);
     //check seller have enough tokens to sell
-    require((address(this).balance) >= etherAmount);
+    require(token.balanceOf(msg.sender) >= _amount);
 
     emit TokenSales(msg.sender, address(this), _amount, etherAmount);
     // transfer

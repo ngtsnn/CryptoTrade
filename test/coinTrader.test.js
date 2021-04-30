@@ -123,6 +123,7 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
 
     it("Testing for over-selling", async () => {
       // purchasing process
+      await token.approve(coinTrader.address, tokenize("60"), {from: tester2});
       let result = await coinTrader.sell(tokenize("60") ,{from: tester2});
 
     });

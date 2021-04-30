@@ -17,8 +17,17 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      account: '',
-      balance: ''
+      account: undefined,
+      admin: undefined,
+      ethBalance: undefined,
+      tokenBalance: undefined,
+      token: undefined,
+      coinTrader: undefined,
+      tokenAddress: undefined,
+      coinTraderAddress: undefined,
+      contractEthBalance: undefined,
+      contractTokenBalance: undefined,
+      loaded: false
     }
   }
 
@@ -48,23 +57,24 @@ class App extends Component {
   async LoadData(){
     const web3 = window.web3;
     const accounts = await web3.eth.getAccounts();
-    const ethBalance = await web3.eth.getBalance(accounts[0]);
+    const ethBalance = (await web3.eth.getBalance(accounts[0])).toString();
     
     const user = {
       account: accounts[0],
       ethBalance,
-      admin: process.env.REACT_APP_ADMIN || "0xAD13bb906dfE2ec9995f73c601e51aF4722988b8",
     }
+
+    this.setState(user)
 
     //get deployed token instance
     const network = await web3.eth.net.getId();
     const tokenData = TokenContract.networks[network];
     if (tokenData){
-      const token = await web3.eth.Contract(TokenContract.abi, tokenData.address);
-      user.token = token;
+      let token = await web3.eth.Contract(TokenContract.abi, tokenData.address);
       let tokenBalance =  await token.methods.balanceOf(user.account).call();
       // console.log(contractBalance.toString());
-      user.tokenBalance = tokenBalance.toString();
+      tokenBalance = tokenBalance.toString();
+      this.setState({tokenBalance, token, tokenAddress: tokenData.address})
     }
     else{
       alert("Ôi bạn ơi, bạn chưa deploy trên network đó đó bạn ơi");
@@ -74,17 +84,24 @@ class App extends Component {
     //get deployed cointrader instance
     const coinTraderData = CoinTraderContract.networks[network];
     if (tokenData && coinTraderData){
-      const coinTrader = await web3.eth.Contract(CoinTraderContract.abi, coinTraderData.address)
-      user.coinTrader = coinTrader;
-      user.loaded = true;
-      let contractBalance = await user.token.methods.balanceOf(coinTraderData.address).call();
-      console.log(contractBalance.toString());
+      const coinTrader = await web3.eth.Contract(CoinTraderContract.abi, coinTraderData.address);
+      let token = this.state.token;
+      let contractTokenBalance = (await token.methods.balanceOf(coinTraderData.address).call()).toString();
+      let contractEthBalance = (await web3.eth.getBalance(coinTraderData.address)).toString();
+      let admin = await coinTrader.methods.adminInfo().call();
+      this.setState({admin: admin || "0xAD13bb906dfE2ec9995f73c601e51aF4722988b8",
+        coinTrader,
+        contractEthBalance,
+        contractTokenBalance,
+        loaded: true,
+        coinTraderAddress: coinTraderData.address,
+      });
+      
     }
     else{
       alert("Ôi bạn ơi, bạn chưa deploy trên network đó đó bạn ơi");
     }
 
-    this.setState(user);
     console.log(this.state);
   }
 
@@ -95,7 +112,7 @@ class App extends Component {
     let web3_1 = window.web3;
     let [updatedAccount] = await web3_1.eth.getAccounts();
     if (updatedAccount !== this.state.account){
-      let ethBalance = await web3_1.eth.getBalance(updatedAccount);
+      let ethBalance = (await web3_1.eth.getBalance(updatedAccount)).toString();
       let tokenBalance = (await this.state.token.methods.balanceOf(updatedAccount).call()).toString();
       console.log("updated account:" , {
         updatedAccount,
@@ -108,7 +125,82 @@ class App extends Component {
         tokenBalance,
       })
     }
+    this.updateBalance();
   }
+
+  async updateBalance() {
+    let contractEthBalance = (await window.web3.eth.getBalance(this.state.coinTraderAddress)).toString();
+    let ethBalance = (await window.web3.eth.getBalance(this.state.account)).toString();
+    let contractTokenBalance = (await this.state.token.methods.balanceOf(this.state.coinTraderAddress).call()).toString();
+    let tokenBalance = (await this.state.token.methods.balanceOf(this.state.account).call()).toString();
+    this.setState({
+      contractTokenBalance,
+      ethBalance,
+      contractEthBalance,
+      tokenBalance,
+    })
+  }
+
+
+  // transaction functions
+  purchase = async (_amount) => {
+    let state = this.state;
+    this.setState({loaded: false});
+
+    if (!state.token || !state.coinTrader){
+      this.setState({loaded: true});
+      return;
+    }
+
+    state.coinTrader.methods.purchase().send({from: state.account, value: _amount}).on("transactionHash", (hash)=>{
+      this.setState({loaded: true});
+    });
+  }
+  sell = async (_amount) => {
+    let state = this.state;
+    this.setState({loaded: false});
+
+    if (!state.token || !state.coinTrader){
+      this.setState({loaded: true});
+      return;
+    }
+
+    state.token.methods.approve(this.state.coinTraderAddress, _amount).send({from: state.account}).on("transactionHash", (hash)=>{
+
+    });
+    state.coinTrader.methods.sell(_amount).send({from: state.account}).on("transactionHash", (hash)=>{
+      this.setState({loaded: true});
+    });
+  }
+  invest = async (_amount) => {
+    let state = this.state;
+    this.setState({loaded: false});
+
+    if (!state.token || !state.coinTrader || state.account !== state.admin){
+      this.setState({loaded: true});
+      return;
+    }
+
+    state.coinTrader.methods.invest().send({from: state.account, value:_amount}).on("transactionHash", async (hash)=>{
+      this.setState({
+        loaded: true,
+      });
+    });
+  }
+  withdraw = async (_amount) => {
+    let state = this.state;
+    this.setState({loaded: false});
+
+    if (!state.token || !state.coinTrader || state.account !== state.admin){
+      this.setState({loaded: true});
+      return;
+    }
+
+    state.coinTrader.methods.withdraw(_amount).send({from: state.account}).on("transactionHash", (hash)=>{
+      this.setState({loaded: true});
+    });
+  }
+
 
   render() {
     let mainContent
@@ -124,7 +216,14 @@ class App extends Component {
                 <Game></Game>
               </div>
               <div className="col-lg-3 py-3">
-                <CoinTrader account={this.state.account} ethBalance={this.state.ethBalance} tokenBalance={this.state.tokenBalance} admin={this.state.admin}></CoinTrader>
+                <CoinTrader 
+                    parentState = {this.state}
+                    purchase = {this.purchase}
+                    sell = {this.sell}
+                    invest = {this.invest}
+                    withdraw = {this.withdraw}
+                  >
+                </CoinTrader>
               </div>
             </div>
           </div>
