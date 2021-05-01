@@ -11,7 +11,7 @@ class BetCard extends Component {
           <img src={this.props.img} alt="" className="img-card-top"/>
           <div className="card-body">
             <div className="form-group">
-            <select className="form-control" id={this.props.id}>
+            <select className="form-control input-value" id={this.props.id}>
               <option value="0">-- Nhiêu xèng nè --</option>
               <option value="5">5</option>
               <option value="10">10</option>

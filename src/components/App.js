@@ -89,7 +89,7 @@ class App extends Component {
       let contractTokenBalance = (await token.methods.balanceOf(coinTraderData.address).call()).toString();
       let contractEthBalance = (await web3.eth.getBalance(coinTraderData.address)).toString();
       let admin = await coinTrader.methods.adminInfo().call();
-      this.setState({admin: admin || "0xAD13bb906dfE2ec9995f73c601e51aF4722988b8",
+      this.setState({admin: admin || "0xB479dC8d3d93599c413aFE42d45a3Bc825adcf37",
         coinTrader,
         contractEthBalance,
         contractTokenBalance,
@@ -200,6 +200,30 @@ class App extends Component {
       this.setState({loaded: true});
     });
   }
+  winPrize = async (_amount) => {
+    this.setState({loaded: false});
+    let state = this.state;
+    if (!state.token || !state.coinTrader){
+      this.setState({loaded: true})
+      return;
+    }
+
+    await state.coinTrader.methods.winPrize(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
+      this.setState({loaded: true});
+    });
+  }
+  loseToken = async (_amount) => {
+    this.setState({loaded: false});
+    let state = this.state;
+    if (!state.token || !state.coinTrader){
+      this.setState({loaded: true})
+      return;
+    }
+
+    await state.coinTrader.methods.loseToken(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
+      this.setState({loaded: true});
+    });
+  }
 
 
   render() {
@@ -213,7 +237,14 @@ class App extends Component {
           <div className="container">
             <div className="row">
               <div className="col-lg-9 py-3">
-                <Game></Game>
+                <Game 
+                    contractToken = {this.state.contractTokenBalance}
+                    token = {this.state.tokenBalance}
+                    winPrize = {this.winPrize}
+                    loseToken = {this.loseToken}
+                  >
+
+                </Game>
               </div>
               <div className="col-lg-3 py-3">
                 <CoinTrader 

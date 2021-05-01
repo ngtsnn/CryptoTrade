@@ -105,10 +105,41 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
       //check
       assert.equal(parseFloat(etherize(earlierBalance)) - 2, parseFloat(etherize(laterBalance)));
     })
+  });
+
+  // Testing for Player
+  describe("Check player actions", async () => {
+    it("Testing for winning prize", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await token.balanceOf(tester1); 
+
+      //investment process (invest 3 eth)
+      let result = await coinTrader.winPrize(tokenize("100"), tester1);
+
+      //get ether balance of contract after investing
+      let laterBalance = await token.balanceOf(tester1); 
+
+      //check 
+      assert.equal(parseFloat(etherize(earlierBalance)) + 100, parseFloat(etherize(laterBalance)));
+    })
+
+    it("Testing for losing token", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await token.balanceOf(tester1); 
+
+      //withdrawal process (withdraw 2 eth)
+      let result = await coinTrader.loseToken(tokenize("30"), tester1);
+
+      //get ether balance of contract after investing
+      let laterBalance = await token.balanceOf(tester1); 
+
+      //check
+      assert.equal(parseFloat(etherize(earlierBalance)) - 30, parseFloat(etherize(laterBalance)));
+    })
   })
 
   // Testing for error
-  describe("Check error: passing is not good (just only the second test can pass when deployed)", async () => {
+  describe("Check error: passing is not good", async () => {
     it("Testing for over-spending", async () => {
       // purchasing process
       let result = await coinTrader.purchase({from: tester2, value: tokenize("200")});

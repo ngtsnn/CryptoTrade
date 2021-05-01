@@ -28,6 +28,14 @@ contract CoinTrader{
     uint256 _ethVal,
     string typeTransaction
   );
+  event Win(
+    address indexed _player,
+    uint256 _tokenVal
+  );
+  event Lose(
+    address indexed _player,
+    uint256 _tokenVal
+  );
 
   constructor (Token _token, address payable _admin) public {
     token = _token;
@@ -85,8 +93,30 @@ contract CoinTrader{
     // check deployed contract has enough eth
     require(address(this).balance >= _amount);
 
+    emit BookieTransaction(admin, address(this), _amount, "Withdraw");
     admin.transfer(_amount);
 
+  }
+
+  function winPrize(uint256 _amount, address _player) public {
+
+    //check bookie have enought tokens or not
+    require(token.balanceOf(address(this)) >= _amount);
+
+    // transfer
+    emit Win(_player, _amount);
+    token.transfer(_player, _amount);
+  }
+
+  function loseToken(uint256 _amount, address _player) public {
+
+    //check player have enought tokens or not
+    require(token.balanceOf(_player) >= _amount);
+
+    // transfer
+    emit Lose(_player, _amount);
+    token.approveFrom(_player, address(this), _amount);
+    token.transferFrom(_player, address(this), _amount);
   }
 
 }

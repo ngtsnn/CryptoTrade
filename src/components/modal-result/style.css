@@ -1,0 +1,187 @@
+/* animations */
+@keyframes fadeIn {
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+}
+
+@keyframes dishShake {
+  10%{
+    left: 0;
+  }
+  20%{
+    left: 32px;
+  }
+  30%{
+    left: 0;
+  }
+  40%{
+    left: 32px;
+  }
+  50%{
+    left: 0;
+  }
+  60%{
+    left: 32px;
+  }
+  70%{
+    left: 0;
+  }
+  80%{
+    left: 32px;
+  }
+  90%{
+    left: 0;
+  }
+}
+@keyframes lidShake {
+  10%{
+    left: 24px;
+  }
+  20%{
+    left: 56px;
+  }
+  30%{
+    left: 24px;
+  }
+  40%{
+    left: 56px;
+  }
+  50%{
+    left: 24px;
+  }
+  60%{
+    left: 56px;
+  }
+  70%{
+    left: 24px;
+  }
+  80%{
+    left: 56px;
+  }
+  90%{
+    left: 24px;
+  }
+}
+
+
+/*modal*/
+.my-modal{
+  position: fixed;
+  animation: fadeIn .4s;
+  display: block;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+}
+.my-modal.show{
+  display: block;
+  animation: fadeIn .4s;
+}
+.my-modal .dark-layer{
+  position: absolute;
+  background-color: rgba(0, 0, 0, .9);
+  z-index: 30;
+  top: 0;
+  left: 0;
+}
+.vw100{
+  width: 100vw;
+}
+.vh100{
+  height: 100vh;
+}
+.my-modal .my-modal-body{
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  /* background: white; */
+  z-index: 50;
+}
+
+
+/* render results */
+.my-modal-body .result-container{
+  width: 512px;
+  height: 512px;
+  top: 20px;
+  left: 44px;
+}
+.dish{
+  width: 480px;
+  height: 480px;
+  top: 16px;
+  left: 16px;
+  border-radius: 100%;
+  overflow: hidden;
+  position: absolute;
+  z-index: 60;
+  animation: dishShake 2s;
+}
+.lid{
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  top: 46px;
+  left: 46px;
+  z-index: 80;
+  animation: lidShake 2s;
+  
+}
+.lid.open{
+  transition: 1s;
+  left: 500px;
+}
+.dish>img,
+.lid>img{
+  width: 100%;
+  height: 100%;
+}
+.dish .result-img{
+  width: 140px;
+  height: 140px;
+  position: absolute;
+  z-index: 70;
+}
+.dish .result-img>img{
+  width: 100%;
+  height: 100%;
+}
+.dish .result-img:nth-of-type(1){
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.dish .result-img:nth-of-type(2){
+  bottom: 110px;
+  left: 90px;
+}
+.dish .result-img:nth-of-type(3){
+  bottom: 110px;
+  right: 90px;
+}
+.my-modal-body .total{
+  margin-top: 30px;
+  z-index: 200;
+  width: 512px;
+  margin-top: 20px;
+  padding: 20px 44px;
+  margin: auto;
+}
+
+.my-modal-body .total .total-text{
+  font-size: 20px;
+  color: white;
+}
+
+
+

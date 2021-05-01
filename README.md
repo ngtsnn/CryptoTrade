@@ -35,7 +35,7 @@
     * After connecting you can explore my gambling game. You may need to translate to your tounge language.
   + Step 4: 
     * Edit my code and make your own.
-- Liscence: no liscence
+- Liscence: only non-commerce purpose
 - References:
   + https://www.youtube.com/watch?v=99pYGpTWcXM
   + https://reactjs.org/
