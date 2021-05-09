@@ -1,7 +1,7 @@
 # CryptoTrade
 - Info
   + My name is Phạm Anh Tú and I'm stuying at UIT.
-  + This project has inspiration from cryto exchange which is being developed in my country. However, when I learned about ERC20 token and how to trade it, I thought that I should make a gambling game.
+  + This project has inspiration from crypto trade market which is being developed in my country. However, when I learned about ERC20 token and how to trade it, I thought that I should make a gambling game.
   + Don't negatively think, just imagine this is the way to understand how d-apps work.
   + My code is not good. Hope all of you can help me for this problem.
   
