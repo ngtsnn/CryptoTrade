@@ -121,22 +121,23 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
 
       //check 
       assert.equal(parseFloat(etherize(earlierBalance)) + 100, parseFloat(etherize(laterBalance)));
-    })
+    });
 
-    it("Testing for losing token", async () => {
+    it("Testing for betting", async () => {
       //get ether balance of contract before investing
       let earlierBalance = await token.balanceOf(tester1); 
 
       //withdrawal process (withdraw 2 eth)
-      let result = await coinTrader.loseToken(tokenize("30"), tester1);
+      await token.approve(coinTrader.address, tokenize("30"), {from: tester1});
+      let result = await coinTrader.bet(tokenize("30"), tester1);
 
       //get ether balance of contract after investing
       let laterBalance = await token.balanceOf(tester1); 
 
       //check
       assert.equal(parseFloat(etherize(earlierBalance)) - 30, parseFloat(etherize(laterBalance)));
-    })
-  })
+    });
+  });
 
   // Testing for error
   describe("Check error: passing is not good", async () => {
@@ -172,12 +173,43 @@ contract("CoinTrader", ([deployer, investor, tester1, tester2]) => {
     it("Testing for investing too much by admin", async () => {
       //investment process (invest 3 eth)
       let result = await coinTrader.invest({from: tester1, value: tokenize("101")});
-    })
+    });
 
     it("Testing for withdrawing too much by admin", async () => {
       //withdrawal process (withdraw 2 eth)
       let result = await coinTrader.withdraw(tokenize("101") ,{from: tester1});
-    })
+    });
+
+    it("Testing for winning prize despite lacking of tokens", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await token.balanceOf(tester1); 
+
+      //investment process (invest 3 eth)
+      let result = await coinTrader.winPrize(tokenize("2000000"), tester1);
+
+      //get ether balance of contract after investing
+      let laterBalance = await token.balanceOf(tester1); 
+
+      //check 
+      assert.equal(parseFloat(etherize(earlierBalance)) + 100, parseFloat(etherize(laterBalance)));
+    });
+
+    it("Testing for betting too much", async () => {
+      //get ether balance of contract before investing
+      let earlierBalance = await token.balanceOf(tester1); 
+
+      //withdrawal process (withdraw 2 eth)
+      await token.approve(coinTrader.address, tokenize("400"), {from: tester1});
+      let result = await coinTrader.bet(tokenize("400"), tester1);
+
+      //get ether balance of contract after investing
+      let laterBalance = await token.balanceOf(tester1); 
+
+      //check
+      assert.equal(parseFloat(etherize(earlierBalance)) - 30, parseFloat(etherize(laterBalance)));
+    });
+
+
   });
 
 });

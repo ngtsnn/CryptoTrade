@@ -27,7 +27,9 @@ class App extends Component {
       coinTraderAddress: undefined,
       contractEthBalance: undefined,
       contractTokenBalance: undefined,
-      loaded: false
+      loaded: false,
+      hasBet: false,
+      inputs: undefined
     }
   }
 
@@ -72,7 +74,6 @@ class App extends Component {
     if (tokenData){
       let token = await web3.eth.Contract(TokenContract.abi, tokenData.address);
       let tokenBalance =  await token.methods.balanceOf(user.account).call();
-      // console.log(contractBalance.toString());
       tokenBalance = tokenBalance.toString();
       this.setState({tokenBalance, token, tokenAddress: tokenData.address})
     }
@@ -89,7 +90,7 @@ class App extends Component {
       let contractTokenBalance = (await token.methods.balanceOf(coinTraderData.address).call()).toString();
       let contractEthBalance = (await web3.eth.getBalance(coinTraderData.address)).toString();
       let admin = await coinTrader.methods.adminInfo().call();
-      this.setState({admin: admin || "0xB479dC8d3d93599c413aFE42d45a3Bc825adcf37",
+      this.setState({admin: admin || "0x8Ece273d4d7593A7cc5011dD8966a4A248413058",
         coinTrader,
         contractEthBalance,
         contractTokenBalance,
@@ -101,8 +102,6 @@ class App extends Component {
     else{
       alert("Ôi bạn ơi, bạn chưa deploy trên network đó đó bạn ơi");
     }
-
-    console.log(this.state);
   }
 
   async LoadDataFrequently(){
@@ -114,11 +113,6 @@ class App extends Component {
     if (updatedAccount !== this.state.account){
       let ethBalance = (await web3_1.eth.getBalance(updatedAccount)).toString();
       let tokenBalance = (await this.state.token.methods.balanceOf(updatedAccount).call()).toString();
-      console.log("updated account:" , {
-        updatedAccount,
-        ethBalance,
-        tokenBalance,
-      });
       this.setState({
         account: updatedAccount,
         ethBalance,
@@ -208,22 +202,39 @@ class App extends Component {
       return;
     }
 
-    await state.coinTrader.methods.winPrize(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
+    state.coinTrader.methods.winPrize(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
       this.setState({loaded: true});
     });
   }
-  loseToken = async (_amount) => {
+  bet = async (_amount) => {
     this.setState({loaded: false});
     let state = this.state;
     if (!state.token || !state.coinTrader){
-      this.setState({loaded: true})
+      this.setState({loaded: true});
       return;
     }
 
-    await state.coinTrader.methods.loseToken(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
-      this.setState({loaded: true});
+    state.token.methods.approve(state.coinTraderAddress, _amount).send({from: state.account}).on("transactionHash", (hash)=>{
+
+    });
+    state.coinTrader.methods.bet(_amount, this.state.account).send({from: this.state.account}).on("transactionHash", (hash)=>{
+      this.setState({
+        loaded: true,
+        hasBet: true,
+      });
     });
   }
+
+  setInputs = (_inputs) => {
+    this.setState({inputs: _inputs});
+  }
+  unbet = () => {
+    this.setState({
+      inputs: undefined,
+      hasBet: false
+    });
+  }
+  
 
 
   render() {
@@ -241,7 +252,11 @@ class App extends Component {
                     contractToken = {this.state.contractTokenBalance}
                     token = {this.state.tokenBalance}
                     winPrize = {this.winPrize}
-                    loseToken = {this.loseToken}
+                    bet = {this.bet}
+                    hasBet = {this.state.hasBet}
+                    inputs = {this.state.inputs}
+                    setInputs = {this.setInputs}
+                    unbet = {this.unbet}
                   >
 
                 </Game>

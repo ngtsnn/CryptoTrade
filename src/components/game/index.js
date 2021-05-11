@@ -20,6 +20,41 @@ class GameController extends Component {
     }
   }
 
+  componentDidMount(){
+    this.renderResult();
+  }
+
+  renderResult = () =>{
+    if(this.props.hasBet){
+      //variables
+      let results = [];
+      let reward = 0;
+      for (var i = 0; i < 3; i++){
+        let randInt = Math.floor(Math.random() * 6)
+        results.push(this.state.bets[randInt])
+        reward += this.props.inputs[randInt];
+      }
+      // deal with reward
+      reward = Math.floor(reward * .9);
+      if (reward){
+        setTimeout(() => {
+          this.props.winPrize(this.tokenize(reward.toString()));
+        }, 4000);
+      }
+
+      // set state
+      this.setState({results, reward});
+
+      // open modal
+      let form = document.querySelector("#game-form")
+      let modalTarget = form.getAttribute("modal-target");
+      let modal = document.querySelector(modalTarget);
+      modal.classList.add("show");
+      this.props.unbet();
+    }
+    
+  }
+
   etherize(value){
     let web3 = window.web3;
     return web3.utils.fromWei(value, "ether");
@@ -38,19 +73,20 @@ class GameController extends Component {
             
           </div>
 
-          <form action="" method="POST" modal-target="#result-modal" onSubmit={(event) => {
+          <form action="" method="POST" id="game-form" modal-target="#result-modal" onSubmit={(event) => {
 
             event.preventDefault();
 
             // variables
             let form = event.target;
-            let modalTarget = form.getAttribute("modal-target");
             let inputs = form.querySelectorAll(".input-value");
-            let wager = [...inputs].reduce((prev, curr) => prev + parseInt(curr.value), 0);
+            inputs = [...inputs].map(val => {
+              return parseInt(val.value);
+            });
+            let wager = inputs.reduce((prev, curr) => prev + curr, 0);
             let errTag = form.parentNode.querySelector(".err-msg");
             let msg = "";
 
-            console.log(this.props.token);
 
             // validate
             if (!wager){
@@ -81,33 +117,14 @@ class GameController extends Component {
             }
             // play game
             else{
-              let results = [];
-              let reward = 0;
-              for (var i = 0; i < 3; i++){
-                let randInt = Math.floor(Math.random() * 6)
-                results.push(this.state.bets[randInt])
-                reward += parseInt(inputs[randInt].value);
-              }
 
-              // deal with reward
-              reward = Math.floor(reward * .9);
-              if (reward){
-                setTimeout(() => {
-                  this.props.winPrize(this.tokenize(reward.toString()));
-                }, 4000);
-              }
-              else{
-                setTimeout(() => {
-                  this.props.loseToken(this.tokenize(wager.toString()));
-                }, 4000);
-              }
+              // betting
+              this.props.setInputs(inputs);
+              this.props.bet(this.tokenize(wager.toString()));
+              
 
-              // set state
-              this.setState({results, reward});
 
-              // open modal
-              let modal = document.querySelector(modalTarget);
-              modal.classList.add("show");
+              
             }
           }}>
             

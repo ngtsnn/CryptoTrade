@@ -31,7 +31,6 @@ class WithdrawForm extends Component {
           const form = event.target;
           const input = form.querySelector("#token-sell-amount");
           let inputValue = input.value;
-          console.log(inputValue);
           const errQuery = form.parentElement.querySelector(".err-msg");
 
           // validate
@@ -76,7 +75,6 @@ class WithdrawForm extends Component {
             <label htmlFor="token-sell-amount" className="font-weight-bold">Xèng</label>
             <input type="number" onChange={(e) => {
               let value = parseFloat(e.target.value);
-              console.log(value > 0);
               if (value > 0){
                 this.setState({output: (value / 100) + " eth"});
               }

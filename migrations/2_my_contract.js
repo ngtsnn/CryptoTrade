@@ -7,7 +7,7 @@ module.exports = async function(deployer) {
   const token = await Token.deployed();
   
   //deploy coin trader
-  await deployer.deploy(CoinTrader, token.address, "0xB479dC8d3d93599c413aFE42d45a3Bc825adcf37");
+  await deployer.deploy(CoinTrader, token.address, "0x8Ece273d4d7593A7cc5011dD8966a4A248413058");
   const coinTrader = await CoinTrader.deployed(token.address);
 
   await token.transfer(coinTrader.address, "1000000000000000000000000");

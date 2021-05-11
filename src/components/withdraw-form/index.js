@@ -25,7 +25,6 @@ class WithdrawForm extends Component {
           const form = event.target;
           const input = form.querySelector("#withdraw-eth-amount");
           let inputValue = input.value;
-          console.log(inputValue);
           const errQuery = form.parentElement.querySelector(".err-msg");
 
           // validate

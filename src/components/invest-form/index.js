@@ -25,7 +25,6 @@ class InvestForm extends Component {
           const form = event.target;
           const input = form.querySelector("#invested-eth-amount");
           let inputValue = input.value;
-          console.log(inputValue);
           const errQuery = form.parentElement.querySelector(".err-msg");
 
           // validate
@@ -36,7 +35,7 @@ class InvestForm extends Component {
           else if(parseFloat(inputValue) <= 0){
             errMsg = "Ôi bạn ơi, bạn phải nạp nhiều hơn 0 bạn ơi!";
           }
-          else if(parseFloat(inputValue) > this.etherize(this.props.eth)){
+          else if(parseFloat(inputValue) >= this.etherize(this.props.eth) - 1){
             errMsg = "Ôi bạn ơi, bạn không đủ eth bạn ơi!";
           }
 

@@ -32,7 +32,7 @@ contract CoinTrader{
     address indexed _player,
     uint256 _tokenVal
   );
-  event Lose(
+  event Bet(
     address indexed _player,
     uint256 _tokenVal
   );
@@ -108,14 +108,13 @@ contract CoinTrader{
     token.transfer(_player, _amount);
   }
 
-  function loseToken(uint256 _amount, address _player) public {
+  function bet(uint256 _amount, address _player) public {
 
     //check player have enought tokens or not
     require(token.balanceOf(_player) >= _amount);
 
     // transfer
-    emit Lose(_player, _amount);
-    token.approveFrom(_player, address(this), _amount);
+    emit Bet(_player, _amount);
     token.transferFrom(_player, address(this), _amount);
   }
 

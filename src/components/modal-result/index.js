@@ -21,7 +21,7 @@ class GameController extends Component {
   render() {
     let results;
     if(this.props.results){
-      results = this.props.results.map(result => this.props.results.map(result => <div className="result-img">
+      results = this.props.results.map(result => this.props.results.map((result, index) => <div key={index} className="result-img">
       <img src={result} alt=""/>
     </div>))
     }
