@@ -26,7 +26,7 @@
 
       $ truffle migrate --reset
 
-    * If you saw 5 last test is error => you do all right things.
+    * If you saw 7 last test is error => you do all right things.
   + Step 3: Setup for app:
     * I really advise you to see the reference video to know more.
     * Connect Metamask to your Ganache server also accounts (by using private key).
