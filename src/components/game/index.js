@@ -32,7 +32,7 @@ class GameController extends Component {
       for (var i = 0; i < 3; i++){
         let randInt = Math.floor(Math.random() * 6)
         results.push(this.state.bets[randInt])
-        reward += this.props.inputs[randInt];
+        reward += this.props.inputs[randInt] * 2;
       }
       // deal with reward
       reward = Math.floor(reward * .9);

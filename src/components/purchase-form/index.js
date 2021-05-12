@@ -42,7 +42,7 @@ class PurchaseForm extends Component {
           else if(parseFloat(inputValue) <= 0){
             errMsg = "Ôi bạn ơi, bạn phải nạp nhiều hơn 0 bạn ơi!";
           }
-          else if(parseFloat(inputValue) / 100 > this.etherize(this.props.eth)){
+          else if(parseFloat(inputValue) / 100 > this.etherize(this.props.eth) - 1){
             errMsg = "Ôi bạn ơi, bạn hết tiền thì nghỉ thôi bạn ơi!";
           }
           else if(parseFloat(inputValue) > this.etherize(this.props.contractToken)){
