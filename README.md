@@ -25,6 +25,10 @@
     * Re-compile all smart contract:
 
       $ truffle migrate --reset
+      
+    * Test contract is working well or not:
+
+      $ truffle test
 
     * If you saw 7 last test is error => you do all right things.
   + Step 3: Setup for app:
