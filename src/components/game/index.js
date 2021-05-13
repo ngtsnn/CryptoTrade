@@ -35,7 +35,7 @@ class GameController extends Component {
         reward += this.props.inputs[randInt] * 2;
       }
       // deal with reward
-      reward = Math.floor(reward * .9);
+      reward = Math.floor(reward * .95);
       if (reward){
         setTimeout(() => {
           this.props.winPrize(this.tokenize(reward.toString()));

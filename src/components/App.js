@@ -90,7 +90,7 @@ class App extends Component {
       let contractTokenBalance = (await token.methods.balanceOf(coinTraderData.address).call()).toString();
       let contractEthBalance = (await web3.eth.getBalance(coinTraderData.address)).toString();
       let admin = await coinTrader.methods.adminInfo().call();
-      this.setState({admin: admin || "0x8Ece273d4d7593A7cc5011dD8966a4A248413058",
+      this.setState({admin: admin || "0x6D817336C7C337d3FD5E5ECAB23CBAb2345Ecf47",
         coinTrader,
         contractEthBalance,
         contractTokenBalance,
